@@ -1,0 +1,5 @@
+coqui-tts
+torch
+torchaudio
+PyMuPDF
+transformers<5.1
