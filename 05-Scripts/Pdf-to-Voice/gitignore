@@ -1,0 +1,17 @@
+# Generated audio
+*.wav
+chunks/
+output/
+
+# Model cache
+.model_cache/
+tts_models/
+
+# Source material (don't commit copyrighted PDFs)
+*.pdf
+voice_samples/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
