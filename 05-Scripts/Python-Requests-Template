@@ -1,0 +1,12 @@
+import requests
+
+# 1. Define your environment coordinates
+url = "http://localhost:8000/vapi/api2/user/login"
+payload = {"email": "test@test.com", "password": "password123"}
+
+# 2. Fire the web request
+response = requests.post(url, json=payload)
+
+# 3. Read the server's mind
+print(f"Status Code: {response.status_code}")
+print(f"Server Response Body: {response.text}")
