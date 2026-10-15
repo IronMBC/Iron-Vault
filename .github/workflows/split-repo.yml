@@ -1,20 +1,45 @@
 name: Split Subfolder to New Repo
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
+    inputs:
+      subfolder:
+        description: 'Path to subfolder to split (prefix)'
+        required: true
+        default: '04-Projects/VAPI-Pentest'
+      target_repo:
+        description: 'Target repository in owner/repo format (must already exist)'
+        required: true
+        default: 'IronMBC/VAPI-Pentest'
+      target_branch:
+        description: 'Branch name on the target repo'
+        required: true
+        default: 'main'
 
 jobs:
   split:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Source Repo
+      - name: Checkout source repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Extract Subfolder
+      - name: Configure git
         run: |
-          git subtree split --prefix=04-Projects/VAPI-Pentest -b split-branch
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Push to New Repository
+      - name: Create subtree split branch
         run: |
-        git push https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@://github.com split-branch:main --force
+          git subtree split --prefix="${{ github.event.inputs.subfolder }}" -b split-branch
+
+      - name: Add target remote (uses PAT)
+        env:
+          PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        run: |
+          TARGET_REPO="${{ github.event.inputs.target_repo }}"
+          git remote add target "https://x-access-token:${PAT}@github.com/${TARGET_REPO}.git"
+
+      - name: Push split branch to target repo
+        run: |
+          git push target split-branch:${{ github.event.inputs.target_branch }} --force
