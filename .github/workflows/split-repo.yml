@@ -1,0 +1,20 @@
+name: Split Subfolder to New Repo
+on:
+  workflow_dispatch: 
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract Subfolder
+        run: |
+          git subtree split --prefix=04-Projects/VAPI-Pentest -b split-branch
+
+      - name: Push to New Repository
+        run: |
+        git push https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@://github.com split-branch:main --force
